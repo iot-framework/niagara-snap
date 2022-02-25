@@ -1,0 +1,14 @@
+name: niagara-framework
+summary: Niagara Framework
+description: |
+  Niagara Framework
+version: 3.7
+base: core20
+grade: devel
+confinement: devmode
+apps:
+  station:
+    command: bin/station
+parts:
+  my-part:
+    plugin: nil
