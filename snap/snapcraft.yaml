@@ -1,8 +1,7 @@
 name: niagara-framework
 version: '4.7'
 summary: Niagara Framework
-description: |
-  Niagara is a IoT Framework
+description: Niagara is a IoT Framework
 
 grade: devel
 confinement: devmode
@@ -12,5 +11,23 @@ architectures:
   - build-on: amd64
 
 parts:
-  my-part:
-    plugin: nil
+  jre:
+    plugin: dump
+    source: ./installer/dist/oracle-jre-linux-x64-es.dist
+    source-type: zip
+    organize:
+      '*': jre/
+  core:
+    plugin: dump
+    source: ./installer/dist/nre-core-linux-x64.dist
+    source-type: zip
+    organize:
+      '*': bin/
+  config:
+    plugin: dump
+    source: ./installer/dist/nre-config-linux-x64.dist
+    source-type: zip
+  modules:
+    plugin: dump
+    source: ./installer/modules/
+    source-type: local
