@@ -21,6 +21,9 @@ parts:
     plugin: dump
     source: ./installer/dist/nre-core-linux-x64.dist
     source-type: zip
+    override-pull: |
+      snapcraftctl pull
+      rm -rf ext/jxbrowser
     organize:
       '*': bin/
   config:
@@ -31,3 +34,5 @@ parts:
     plugin: dump
     source: ./installer/modules/
     source-type: local
+    organize:
+      '*': modules/
