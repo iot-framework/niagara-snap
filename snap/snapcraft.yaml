@@ -5,16 +5,36 @@ description: Niagara is a IoT Framework
 
 grade: devel
 confinement: devmode
-base: core20
+base: core18
 
 architectures:
   - build-on: amd64
+
+system-usernames:
+  snap_daemon: shared
+
+apps:
+  niagarad:
+    command: bin/start_niagarad.sh 
+    environment:
+      LD_LIBRARY_PATH: $SNAP/bin
+      HOME: $SNAP_COMMON
+  daemon:
+    command: bin/start_niagarad.sh /console 
+    daemon: simple
+    environment:
+      LD_LIBRARY_PATH: $SNAP/bin
+      HOME: $SNAP_COMMON
 
 parts:
   jre:
     plugin: dump
     source: ./installer/dist/oracle-jre-linux-x64-es.dist
     source-type: zip
+    override-pull: |
+      snapcraftctl pull
+      find . -type f -exec chmod a+r {} + 
+      find . -type d -exec chmod a+rx {} + 
     organize:
       '*': jre/
   core:
@@ -30,9 +50,32 @@ parts:
     plugin: dump
     source: ./installer/dist/nre-config-linux-x64.dist
     source-type: zip
+    stage-packages:
+      - setpriv
+    stage:
+      - -etc/brand.properties    
+      - -lib/licenseAgreement.txt
+      - -lib/readmeLicenses.txt
+      - -*.sh
+      - -INSTALL
+      - -README
+      - -META-INF
+      - '*'
+  overlay:
+    plugin: dump
+    source: ./installer/overlay/
+    source-type: local
   modules:
     plugin: dump
     source: ./installer/modules/
     source-type: local
     organize:
       '*': modules/
+  extra:
+    plugin: dump
+    source: ./extra
+    source-type: local
+
+layout:
+  /etc/niagara:
+    symlink: $SNAP_COMMON/etc/niagara
