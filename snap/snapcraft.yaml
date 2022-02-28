@@ -31,19 +31,15 @@ parts:
     plugin: dump
     source: ./installer/dist/oracle-jre-linux-x64-es.dist
     source-type: zip
-    override-pull: |
-      snapcraftctl pull
-      find . -type f -exec chmod a+r {} + 
-      find . -type d -exec chmod a+rx {} + 
     organize:
       '*': jre/
   core:
     plugin: dump
     source: ./installer/dist/nre-core-linux-x64.dist
     source-type: zip
-    override-pull: |
-      snapcraftctl pull
-      rm -rf ext/jxbrowser
+    stage:
+      - -ext/jxbrowser    
+      - '*'
     organize:
       '*': bin/
   config:
@@ -53,24 +49,20 @@ parts:
     stage-packages:
       - setpriv
     stage:
-      - -etc/brand.properties    
-      - -lib/licenseAgreement.txt
-      - -lib/readmeLicenses.txt
+      - -etc    
       - -*.sh
       - -INSTALL
       - -README
       - -META-INF
       - '*'
-  overlay:
-    plugin: dump
-    source: ./installer/overlay/
-    source-type: local
+    override-prime: |
+      snapcraftctl prime
+      ln -sf /var/snap/niagara4/common/etc etc
   modules:
-    plugin: dump
-    source: ./installer/modules/
-    source-type: local
-    organize:
-      '*': modules/
+    plugin: nil
+    override-prime: |
+      snapcraftctl prime
+      ln -sf /var/snap/niagara4/common/modules modules
   extra:
     plugin: dump
     source: ./extra
@@ -78,4 +70,4 @@ parts:
 
 layout:
   /etc/niagara:
-    symlink: $SNAP_COMMON/etc/niagara
+    symlink: $SNAP_COMMON/etc
